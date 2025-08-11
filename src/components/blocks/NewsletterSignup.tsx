@@ -33,7 +33,7 @@ export default function NewsletterSignup({
         message: "Check your inbox for a welcome email.",
       });
       setEmail("");
-    } catch (err) {
+    } catch {
       push({
         title: "Oops",
         message: "Could not subscribe. Try again in a minute.",

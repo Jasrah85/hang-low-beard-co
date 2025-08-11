@@ -14,7 +14,7 @@ const NAV = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function NavBar({ cartCount = 0 }: { cartCount?: number }) {
+export default function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
