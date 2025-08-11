@@ -81,6 +81,18 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
 
 .dark {
   --background: oklch(0.145 0 0);
