@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-
+import { Suspense } from "react";
 import RootHeader from "@/components/layout/RootHeader";
 import RootFooter from "@/components/layout/RootFooter";
 import { ToastProvider } from "@/components/ui/Toast";
@@ -74,7 +74,9 @@ export default function RootLayout({
         <ToastProvider>
           <CartProvider>
             {/* Track route changes (GA etc.) */}
-            <AnalyticsWrapper />
+            <Suspense fallback={null}>
+              <AnalyticsWrapper />
+            </Suspense>
 
             <RootHeader />
             <main id="content" className="flex-1">
