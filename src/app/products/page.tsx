@@ -1,4 +1,4 @@
-// src/app/(site)/products/page.tsx
+// src/app/products/page.tsx
 import Container from "@/components/layout/Container";
 import ProductGrid from "@/components/product/ProductGrid";
 import ProductFilters from "@/components/product/ProductFilters";
@@ -14,26 +14,23 @@ function bySort(sort: string | null) {
     if (sort === "price-asc") return priceA - priceB;
     if (sort === "price-desc") return priceB - priceA;
     if (sort === "rating-desc") return (b.rating ?? 0) - (a.rating ?? 0);
-    return 0;
+    return 0; // featured/default
   };
 }
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const sp = await searchParams;
+
   const all = await listProducts();
-  const scents = (
-    Array.isArray(searchParams.s)
-      ? searchParams.s
-      : searchParams.s
-        ? [searchParams.s]
-        : []
-  ) as string[];
-  const min = Number(searchParams.min ?? 0);
-  const max = Number(searchParams.max ?? Infinity);
-  const sort = (searchParams.sort as string) ?? null;
+
+  const scents = (Array.isArray(sp.s) ? sp.s : sp.s ? [sp.s] : []) as string[];
+  const min = Number(sp.min ?? 0);
+  const max = Number(sp.max ?? Infinity);
+  const sort = (sp.sort as string) ?? null;
 
   const filtered = all.filter((p) => {
     const price = p.variants?.[0]?.price?.cents ?? 0;
@@ -44,7 +41,6 @@ export default async function ProductsPage({
   });
 
   const products = filtered.sort(bySort(sort));
-
   const filterScents = ALL_SCENTS.map((s) => ({ key: s.key, label: s.name }));
 
   return (
