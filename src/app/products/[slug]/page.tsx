@@ -1,35 +1,38 @@
-// src/app/products/[slug]/page.tsx  (adjust path if you use (site)/)
+// src/app/products/[slug]/page.tsx
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
 import Container from "@/components/layout/Container";
-import ProductGallery from "@/components/pdp/ProductGallery"; // client
-import ProductTitle from "@/components/pdp/ProductTitle"; // server
-import ProductPrice from "@/components/pdp/ProductPrice"; // server
-import ScentNotes from "@/components/pdp/ScentNotes"; // server
-import IngredientsList from "@/components/pdp/IngredientsList"; // server
-import HowToUse from "@/components/pdp/HowToUse"; // server
-import ShippingReturns from "@/components/pdp/ShippingReturns"; // server
-import ShareButtons from "@/components/pdp/ShareButtons"; // client
-import PurchaseBox from "@/components/pdp/PurchaseBox"; // client boundary (see below)
+import ProductGallery from "@/components/pdp/ProductGallery";
+import ProductTitle from "@/components/pdp/ProductTitle";
+import ProductPrice from "@/components/pdp/ProductPrice";
+import ScentNotes from "@/components/pdp/ScentNotes";
+import IngredientsList from "@/components/pdp/IngredientsList";
+import HowToUse from "@/components/pdp/HowToUse";
+import ShippingReturns from "@/components/pdp/ShippingReturns";
+import ShareButtons from "@/components/pdp/ShareButtons";
+import PurchaseBox from "@/components/pdp/PurchaseBox";
 
 import { getProductBySlug } from "@/lib/repo/products.server";
-import { notFound } from "next/navigation";
 import { productMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}) {
-  const p = await getProductBySlug(params.slug);
-  if (!p) return {};
-  return productMetadata(p);
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const p = await getProductBySlug(slug);
+  return p ? productMetadata(p) : {};
 }
 
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
   const defaultVariant = product.variants[0];
@@ -45,10 +48,9 @@ export default async function ProductPage({
             <ProductPrice price={defaultVariant.price} />
           </div>
 
-          {/* Client-side controls live inside PurchaseBox */}
+          {/* client boundary for variant/qty/add-to-cart */}
           <PurchaseBox product={product} />
 
-          {/* Details */}
           <div className="mt-8 grid gap-6">
             <ScentNotes scents={product.scents} />
             <IngredientsList
